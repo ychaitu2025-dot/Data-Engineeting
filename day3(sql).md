@@ -1,5 +1,5 @@
 Session 3  
-  [Your Name]
+
 **Relational Databases and MySQL Fundamentals**
 
 **Types of Data in RDBMS Relational databases are primarily architected for** 
