@@ -1,4 +1,4 @@
--- Assignment 1 By Ritesh Reddy Koya
+-- Assignment 1 By Chaitanya 
 
 USE sakila;
 
