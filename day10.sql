@@ -1,5 +1,5 @@
 
--- day 10 : INDEXING & FINE-TUNING
+-- day10 : INDEXING & FINE-TUNING
 
 
 USE sakila;
