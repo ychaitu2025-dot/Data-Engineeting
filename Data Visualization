@@ -1,0 +1,566 @@
+"""
+Python Data Visualization: Pandas, NumPy, Matplotlib, and Plotly
+Topic: Data cleaning, Pandas basics, Multiple chart types, Variance, Correlation, Subplots, Interactive visualization
+Student: Chaitanya Y
+Date: Data Visualization Session
+"""
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+print("=" * 70)
+print("DATA VISUALIZATION: PANDAS, NUMPY, MATPLOTLIB, AND PLOTLY")
+print("=" * 70)
+
+
+# ============================================================================
+# 1) WHAT IS DATA VISUALIZATION?
+# ============================================================================
+# Data visualization is the graphical representation of data using charts/plots
+# It helps us:
+#   - identify patterns and trends
+#   - compare categories
+#   - detect outliers
+#   - understand distributions
+#   - communicate insights clearly
+
+print("\n--- WHAT IS DATA VISUALIZATION? ---")
+print("Purpose: Convert data into visual representations for insights")
+
+
+# ============================================================================
+# 2) CREATE SAMPLE DATA (NUMPY + PANDAS)
+# ============================================================================
+# Create a student performance dataset for practice
+
+print("\n--- CREATE SAMPLE DATA ---")
+
+np.random.seed(42)
+
+df = pd.DataFrame({
+    "Student": ["A", "B", "C", "D", "E", "F", "G", "H"],
+    "Hours_Studied": [2, 3, 5, 1, 4, 6, 3, 7],
+    "Marks": [55, 65, 82, 48, 74, 88, 69, 93],
+    "Attendance": [78, 85, 95, 70, 88, 96, 84, 98],
+    "Category": ["Avg", "Avg", "Top", "Low", "Avg", "Top", "Avg", "Top"]
+})
+
+print("Sample DataFrame:")
+print(df)
+
+
+# ============================================================================
+# 3) PANDAS BASICS (DATA PREPARATION BEFORE VISUALIZATION)
+# ============================================================================
+# Good visualizations start with good data preparation
+
+print("\n--- PANDAS BASICS ---")
+
+# First and last rows
+print("\nFirst 3 rows:")
+print(df.head(3))
+
+print("\nData types:")
+print(df.dtypes)
+
+# Summary statistics
+print("\nSummary statistics:")
+print(df.describe())
+
+
+# ============================================================================
+# 3.1 SORTING AND FILTERING
+# ============================================================================
+print("\n--- SORTING AND FILTERING ---")
+
+# Sort by marks (descending)
+print("Top 3 students by marks:")
+print(df.sort_values(by="Marks", ascending=False).head(3))
+
+# Filter students with marks >= 70
+print("\nStudents with marks >= 70:")
+print(df[df["Marks"] >= 70])
+
+# Multiple conditions
+print("\nTop performers (marks >= 70 AND attendance > 85):")
+print(df[(df["Marks"] >= 70) & (df["Attendance"] > 85)])
+
+
+# ============================================================================
+# 3.2 CREATING NEW COLUMNS
+# ============================================================================
+print("\n--- CREATING NEW COLUMNS ---")
+
+df["Performance_Ratio"] = df["Marks"] / 100
+df["Result"] = df["Marks"].apply(lambda x: "Pass" if x >= 70 else "Needs Improvement")
+
+print(df[["Student", "Marks", "Performance_Ratio", "Result"]])
+
+
+# ============================================================================
+# 3.3 LOC vs ILOC
+# ============================================================================
+# loc = label-based indexing
+# iloc = position-based indexing
+
+print("\n--- LOC vs ILOC ---")
+print("Using loc (row 0):")
+print(df.loc[0])
+
+print("\nUsing iloc (first row, first 3 columns):")
+print(df.iloc[0, 0:3])
+
+
+# ============================================================================
+# 3.4 HANDLING MISSING VALUES
+# ============================================================================
+print("\n--- HANDLING MISSING VALUES ---")
+
+df_with_nan = pd.DataFrame({
+    "A": [1, 2, np.nan, 4],
+    "B": [5, np.nan, 7, 8]
+})
+
+print("DataFrame with NaN:")
+print(df_with_nan)
+
+print("\nAfter dropna():")
+print(df_with_nan.dropna())
+
+print("\nAfter fillna(0):")
+print(df_with_nan.fillna(0))
+
+
+# ============================================================================
+# 4) GROUPING AND AGGREGATION
+# ============================================================================
+print("\n--- GROUPING AND AGGREGATION ---")
+
+# Average marks by category
+category_summary = df.groupby("Category")["Marks"].agg(["mean", "count", "sum"])
+print("Summary by Category:")
+print(category_summary)
+
+
+# ============================================================================
+# 5) COMBINING AND RESHAPING DATA
+# ============================================================================
+print("\n--- COMBINING DATAFRAMES ---")
+
+df1 = pd.DataFrame({"ID": [1, 2], "Name": ["Alice", "Bob"]})
+df2 = pd.DataFrame({"ID": [3, 4], "Name": ["Charlie", "Diana"]})
+
+combined = pd.concat([df1, df2], axis=0, ignore_index=True)
+print("Concatenated DataFrames:")
+print(combined)
+
+# Merge
+students_df = pd.DataFrame({"ID": [1, 2, 3], "Name": ["A", "B", "C"]})
+scores_df = pd.DataFrame({"ID": [1, 2, 3], "Score": [78, 85, 90]})
+
+merged = pd.merge(students_df, scores_df, on="ID")
+print("\nMerged DataFrames:")
+print(merged)
+
+
+# ============================================================================
+# 6) PLOTTING BASICS WITH MATPLOTLIB
+# ============================================================================
+print("\n--- BASIC LINE PLOT ---")
+
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 1, 8, 7]
+
+plt.figure(figsize=(8, 5))
+plt.plot(x, y, marker="o", linewidth=2, markersize=8)
+plt.title("Basic Line Plot", fontsize=14, fontweight="bold")
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.grid(True, alpha=0.3)
+plt.show()
+
+
+# ============================================================================
+# 7) DIFFERENT TYPES OF PLOTS
+# ============================================================================
+
+# 7.1 LINE PLOT - Trends over time
+print("\n--- 7.1 LINE PLOT ---")
+
+days = [1, 2, 3, 4, 5]
+temperature = [30, 32, 31, 35, 36]
+
+plt.figure(figsize=(8, 5))
+plt.plot(days, temperature, marker="o", linewidth=2, color="red")
+plt.title("Temperature Trend (Line Plot)")
+plt.xlabel("Day")
+plt.ylabel("Temperature (°C)")
+plt.grid(True, alpha=0.3)
+plt.show()
+
+
+# 7.2 HISTOGRAM - Distribution of values
+print("\n--- 7.2 HISTOGRAM ---")
+
+marks = [55, 60, 61, 68, 70, 72, 75, 78, 80, 82, 85, 88, 90, 92, 95]
+
+plt.figure(figsize=(8, 5))
+plt.hist(marks, bins=5, color="skyblue", edgecolor="black")
+plt.title("Marks Distribution (Histogram)")
+plt.xlabel("Marks")
+plt.ylabel("Frequency")
+plt.grid(True, alpha=0.3, axis="y")
+plt.show()
+
+
+# 7.3 SCATTER PLOT - Relationship between two variables
+print("\n--- 7.3 SCATTER PLOT ---")
+
+hours = [1, 2, 3, 4, 5, 6, 7]
+scores = [50, 55, 65, 70, 78, 85, 90]
+
+plt.figure(figsize=(8, 5))
+plt.scatter(hours, scores, s=100, color="green", alpha=0.6)
+plt.title("Hours Studied vs Score (Scatter Plot)")
+plt.xlabel("Hours Studied")
+plt.ylabel("Score")
+plt.grid(True, alpha=0.3)
+plt.show()
+
+
+# 7.4 BAR CHART - Compare categories
+print("\n--- 7.4 BAR CHART ---")
+
+categories = ["Books", "Electronics", "Clothes"]
+sales = [200, 350, 150]
+
+plt.figure(figsize=(8, 5))
+plt.bar(categories, sales, color=["blue", "orange", "green"])
+plt.title("Sales by Category (Bar Chart)")
+plt.xlabel("Category")
+plt.ylabel("Sales")
+plt.grid(True, alpha=0.3, axis="y")
+plt.show()
+
+
+# 7.5 PIE CHART - Part-to-whole comparison
+print("\n--- 7.5 PIE CHART ---")
+
+sizes = [40, 35, 25]
+labels = ["Books", "Electronics", "Clothes"]
+colors = ["lightblue", "lightcoral", "lightgreen"]
+
+plt.figure(figsize=(8, 5))
+plt.pie(sizes, labels=labels, autopct="%1.1f%%", colors=colors, startangle=90)
+plt.title("Category Share (Pie Chart)")
+plt.show()
+
+
+# 7.6 BOX PLOT - Shows distribution, quartiles, and outliers
+print("\n--- 7.6 BOX PLOT ---")
+
+data = [10, 12, 12, 13, 14, 15, 16, 18, 50]  # 50 is an outlier
+
+plt.figure(figsize=(8, 5))
+plt.boxplot(data)
+plt.title("Box Plot (Shows Outliers)")
+plt.ylabel("Value")
+plt.grid(True, alpha=0.3, axis="y")
+plt.show()
+
+
+# 7.7 AREA CHART - Cumulative trends
+print("\n--- 7.7 AREA CHART ---")
+
+x_area = [1, 2, 3, 4, 5]
+y_area = [3, 5, 2, 6, 4]
+
+plt.figure(figsize=(8, 5))
+plt.fill_between(x_area, y_area, alpha=0.4, color="purple")
+plt.plot(x_area, y_area, color="purple", linewidth=2)
+plt.title("Area Chart")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.grid(True, alpha=0.3)
+plt.show()
+
+
+# 7.8 SUBPLOTS - Multiple plots in one figure
+print("\n--- 7.8 SUBPLOTS ---")
+
+x_sub = [1, 2, 3, 4]
+y1_sub = [1, 4, 9, 16]
+y2_sub = [1, 8, 27, 64]
+
+plt.figure(figsize=(12, 4))
+
+plt.subplot(1, 2, 1)
+plt.plot(x_sub, y1_sub, marker="o", color="blue")
+plt.title("Square (x²)")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.grid(True, alpha=0.3)
+
+plt.subplot(1, 2, 2)
+plt.plot(x_sub, y2_sub, marker="s", color="red")
+plt.title("Cube (x³)")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+
+# 7.9 STACKED BAR CHART
+print("\n--- 7.9 STACKED BAR CHART ---")
+
+stack_df = pd.DataFrame({
+    "Class": ["A", "B", "C"],
+    "Pass": [30, 25, 28],
+    "Fail": [5, 8, 4]
+})
+
+plt.figure(figsize=(8, 5))
+stack_df.set_index("Class")[["Pass", "Fail"]].plot(kind="bar", stacked=True, color=["green", "red"])
+plt.title("Stacked Bar Chart (Pass vs Fail)")
+plt.ylabel("Students")
+plt.xlabel("Class")
+plt.legend(title="Result")
+plt.grid(True, alpha=0.3, axis="y")
+plt.tight_layout()
+plt.show()
+
+
+# 7.10 BUBBLE CHART - Three variables (x, y, size)
+print("\n--- 7.10 BUBBLE CHART ---")
+
+x_bubble = [1, 2, 3, 4]
+y_bubble = [10, 15, 13, 17]
+sizes_bubble = [100, 300, 200, 500]
+
+plt.figure(figsize=(8, 5))
+plt.scatter(x_bubble, y_bubble, s=sizes_bubble, alpha=0.5, color="purple")
+plt.title("Bubble Chart (Size represents 3rd variable)")
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.grid(True, alpha=0.3)
+plt.show()
+
+
+# ============================================================================
+# 8) PANDAS BUILT-IN PLOTTING
+# ============================================================================
+# Pandas has convenient plotting built on Matplotlib
+
+print("\n--- PANDAS BUILT-IN PLOTTING ---")
+
+df_plot = pd.DataFrame({
+    "Day": [1, 2, 3, 4, 5],
+    "Sales": [100, 120, 90, 150, 170]
+})
+
+# Line plot
+plt.figure(figsize=(10, 3))
+plt.subplot(1, 2, 1)
+df_plot.plot(x="Day", y="Sales", kind="line", ax=plt.gca(), title="Sales Trend", legend=False)
+
+# Bar plot
+plt.subplot(1, 2, 2)
+df_plot.plot(x="Day", y="Sales", kind="bar", ax=plt.gca(), title="Sales by Day", legend=False)
+
+plt.tight_layout()
+plt.show()
+
+# Histogram from DataFrame
+plt.figure(figsize=(8, 5))
+df["Marks"].plot(kind="hist", bins=5, title="Marks Histogram", color="skyblue", edgecolor="black")
+plt.xlabel("Marks")
+plt.ylabel("Frequency")
+plt.show()
+
+# Box plot multiple columns
+plt.figure(figsize=(8, 5))
+df[["Marks", "Hours_Studied", "Attendance"]].plot(kind="box", title="Box Plot (Multiple Columns)")
+plt.grid(True, alpha=0.3, axis="y")
+plt.show()
+
+# Scatter plot from DataFrame
+plt.figure(figsize=(8, 5))
+df.plot(kind="scatter", x="Hours_Studied", y="Marks", title="Hours vs Marks", color="green")
+plt.grid(True, alpha=0.3)
+plt.show()
+
+
+# ============================================================================
+# 9) VARIANCE AND CORRELATION
+# ============================================================================
+# Variance: how spread out data is from the mean
+# Correlation: linear relationship between variables (-1 to 1)
+
+print("\n--- VARIANCE AND CORRELATION ---")
+
+print(f"Variance of Marks: {df['Marks'].var():.2f}")
+print(f"Standard Deviation of Marks: {df['Marks'].std():.2f}")
+
+print("\nCorrelation Matrix:")
+corr_matrix = df[["Marks", "Hours_Studied", "Attendance"]].corr()
+print(corr_matrix)
+
+
+# ============================================================================
+# 10) HEATMAP (CORRELATION VISUALIZATION)
+# ============================================================================
+print("\n--- CORRELATION INSIGHTS ---")
+print("Strong positive correlation between:")
+
+for i, col1 in enumerate(corr_matrix.columns):
+    for j, col2 in enumerate(corr_matrix.columns):
+        if i < j:  # Only upper triangle
+            corr_value = corr_matrix.loc[col1, col2]
+            if abs(corr_value) > 0.5:
+                print(f"  {col1} <-> {col2}: {corr_value:.3f}")
+
+
+# ============================================================================
+# 11) 2D vs 3D PLOTS
+# ============================================================================
+print("\n--- 2D vs 3D PLOTS ---")
+print("2D Plots: Line, Bar, Scatter, Histogram, Box, Heatmap")
+print("3D Plots: Useful for 3 variables (advanced visualization)")
+print("3D often better with Plotly (interactive) than Matplotlib")
+
+
+# ============================================================================
+# 12) PLOTLY INTRODUCTION (INTERACTIVE VISUALIZATION)
+# ============================================================================
+print("\n--- PLOTLY AND INTERACTIVE VISUALIZATION ---")
+print("""
+Plotly advantages:
+  - Interactive (zoom, pan, hover)
+  - 3D visualization capability
+  - Better for dashboards
+  - Export to HTML
+
+Example (uncomment if plotly installed):
+  import plotly.express as px
+  fig = px.scatter(df, x="Hours_Studied", y="Marks", color="Category",
+                   title="Interactive Scatter Plot")
+  fig.show()
+""")
+
+
+# ============================================================================
+# 13) REAL-WORLD EXAMPLE: COMPREHENSIVE ANALYSIS
+# ============================================================================
+print("\n--- REAL-WORLD EXAMPLE: STUDENT PERFORMANCE ANALYSIS ---")
+
+# Create comprehensive visualization
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+
+# 1. Histogram - Distribution
+axes[0, 0].hist(df["Marks"], bins=5, color="skyblue", edgecolor="black")
+axes[0, 0].set_title("Marks Distribution")
+axes[0, 0].set_xlabel("Marks")
+axes[0, 0].set_ylabel("Frequency")
+
+# 2. Scatter - Correlation
+axes[0, 1].scatter(df["Hours_Studied"], df["Marks"], color="green", s=100)
+axes[0, 1].set_title("Hours vs Marks")
+axes[0, 1].set_xlabel("Hours Studied")
+axes[0, 1].set_ylabel("Marks")
+axes[0, 1].grid(True, alpha=0.3)
+
+# 3. Box plot
+axes[0, 2].boxplot([df["Marks"], df["Attendance"], df["Hours_Studied"]])
+axes[0, 2].set_title("Distribution Comparison")
+axes[0, 2].set_xticklabels(["Marks", "Attendance", "Hours"])
+axes[0, 2].grid(True, alpha=0.3, axis="y")
+
+# 4. Bar - Average by category
+category_avg = df.groupby("Category")["Marks"].mean()
+axes[1, 0].bar(category_avg.index, category_avg.values, color=["orange", "red", "blue"])
+axes[1, 0].set_title("Average Marks by Category")
+axes[1, 0].set_ylabel("Average Marks")
+axes[1, 0].grid(True, alpha=0.3, axis="y")
+
+# 5. Pie - Category distribution
+category_counts = df["Category"].value_counts()
+axes[1, 1].pie(category_counts.values, labels=category_counts.index, autopct="%1.1f%%")
+axes[1, 1].set_title("Student Distribution")
+
+# 6. Line - Sorted marks
+axes[1, 2].plot(sorted(df["Marks"]), marker="o", color="purple")
+axes[1, 2].set_title("Marks Trend (Sorted)")
+axes[1, 2].set_xlabel("Student Rank")
+axes[1, 2].set_ylabel("Marks")
+axes[1, 2].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+
+# ============================================================================
+# SUMMARY OF KEY CONCEPTS
+# ============================================================================
+summary = """
+SUMMARY: DATA VISUALIZATION
+
+1. PANDAS BASICS:
+   - head()/tail() - first/last rows
+   - describe() - statistics
+   - sort_values() - sorting
+   - groupby() - aggregation
+   - merge()/concat() - combining
+
+2. DATA CLEANING:
+   - dropna() - remove missing
+   - fillna() - fill missing
+   - loc/iloc - indexing
+   - Filtering with conditions
+
+3. CHART TYPES:
+   - Line: trends over time
+   - Histogram: distribution of values
+   - Scatter: relationship between 2 variables
+   - Bar: category comparison
+   - Pie: part-to-whole
+   - Box: quartiles & outliers
+   - Area: cumulative trends
+   - Bubble: 3 variables
+
+4. MATPLOTLIB:
+   - plt.plot() - line
+   - plt.hist() - histogram
+   - plt.scatter() - scatter
+   - plt.bar() - bar chart
+   - plt.pie() - pie chart
+   - plt.boxplot() - box plot
+   - Subplots for multiple plots
+
+5. PANDAS PLOTTING:
+   - df.plot(kind="line/bar/scatter/hist/box")
+   - Convenient, uses Matplotlib
+
+6. STATISTICS:
+   - var() - variance
+   - corr() - correlation (-1 to 1)
+   - mean(), std(), etc.
+
+7. PLOTLY (INTERACTIVE):
+   - Better for interactive dashboards
+   - Supports 3D visualization
+   - Hover, zoom, pan features
+   - Export to HTML
+
+8. 2D vs 3D:
+   - 2D: most charts
+   - 3D: when 3 variables matter visually
+   - Plotly better for 3D
+"""
+
+print("\n" + "=" * 70)
+print(summary)
+print("=" * 70)
+print("\nData Visualization session completed successfully!")
