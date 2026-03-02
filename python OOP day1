@@ -1,0 +1,509 @@
+"""
+Python OOP - Session 1: Classes, Objects, and Core OOP Principles
+Topic: Classes, Objects, __init__, __str__, __repr__, Encapsulation, Inheritance, Polymorphism, *args/**kwargs
+Student: Chaitanya Y
+Date: OOP Session 1
+"""
+
+print("=" * 70)
+print("OOP SESSION 1: CLASSES, OBJECTS, AND CORE PRINCIPLES")
+print("=" * 70)
+
+
+# ============================================================================
+# 1) WHAT IS OOP?
+# ============================================================================
+# Object-Oriented Programming (OOP) is a way of building programs using objects.
+# An object combines:
+#   - DATA (attributes)
+#   - BEHAVIOR (methods)
+
+# Instead of writing everything as standalone functions, OOP helps you model
+# real-world things as objects.
+
+print("\n--- WHAT IS OOP? ---")
+print("OOP combines data (attributes) and behavior (methods) into objects")
+
+
+# ============================================================================
+# 2) CLASS vs OBJECT
+# ============================================================================
+# CLASS: blueprint/template (defines what an object should look like)
+# OBJECT (instance): a real thing created from a class
+
+# Example:
+#   Car is a class
+#   my_car = Car() is an object
+
+print("\n--- CLASS vs OBJECT ---")
+
+class Car:
+    """Blueprint for a car"""
+    pass
+
+my_car = Car()
+print(f"my_car type: {type(my_car)}")
+print(f"Is my_car an instance of Car? {isinstance(my_car, Car)}")
+
+
+# ============================================================================
+# 3) THE 4 PILLARS OF OOP
+# ============================================================================
+# 1) ABSTRACTION: Show only what's necessary, hide internal complexity
+# 2) ENCAPSULATION: Keep data and methods together, control access
+# 3) INHERITANCE: Create a new class from an existing class
+# 4) POLYMORPHISM: Same method name, different behavior per object type
+
+print("\n--- THE 4 PILLARS OF OOP ---")
+print("1. Abstraction: Hide complexity, show only what's needed")
+print("2. Encapsulation: Keep data safe, control access")
+print("3. Inheritance: Reuse code from parent classes")
+print("4. Polymorphism: Same method, different behaviors")
+
+
+# ============================================================================
+# 4) DEFINING A CLASS: __init__ (CONSTRUCTOR)
+# ============================================================================
+# __init__ runs automatically when you create an object
+# Use it to initialize attributes
+
+print("\n--- CONSTRUCTOR (__init__) ---")
+
+class Student:
+    def __init__(self, name, major):
+        """Initialize a Student with name and major"""
+        self.name = name
+        self.major = major
+
+s1 = Student("Ritesh", "CS")
+print(f"Student name: {s1.name}")
+print(f"Student major: {s1.major}")
+
+
+# ============================================================================
+# 5) METHODS
+# ============================================================================
+# A METHOD is a function inside a class
+# It usually uses SELF to access or update object data
+
+print("\n--- METHODS ---")
+
+class BankAccount:
+    def __init__(self, owner, balance=0):
+        """Initialize account with owner and starting balance"""
+        self.owner = owner
+        self.balance = balance
+
+    def deposit(self, amount):
+        """Add money to account"""
+        self.balance += amount
+        print(f"Deposited {amount}. New balance: {self.balance}")
+
+    def withdraw(self, amount):
+        """Remove money from account (if sufficient funds)"""
+        if amount > self.balance:
+            print("Insufficient funds")
+            return
+        self.balance -= amount
+        print(f"Withdrew {amount}. New balance: {self.balance}")
+
+acct = BankAccount("Koya", 100)
+acct.deposit(50)
+acct.withdraw(30)
+print(f"Final balance: {acct.balance}")
+
+
+# ============================================================================
+# 6) __str__ AND __repr__
+# ============================================================================
+# __str__: user-friendly string (used by print())
+# __repr__: debug-friendly string (used by repr() and Jupyter)
+
+print("\n--- __str__ AND __repr__ ---")
+
+class Book:
+    def __init__(self, title, author):
+        self.title = title
+        self.author = author
+
+    def __str__(self):
+        """User-friendly: what to show when printed"""
+        return f"{self.title} by {self.author}"
+
+    def __repr__(self):
+        """Debug-friendly: more detailed representation"""
+        return f"Book(title={self.title!r}, author={self.author!r})"
+
+b = Book("Harry Potter", "J.K. Rowling")
+print(f"str(b): {str(b)}")
+print(f"repr(b): {repr(b)}")
+
+
+# ============================================================================
+# 7) __dict__ - OBJECT'S ATTRIBUTE DICTIONARY
+# ============================================================================
+# Objects store their attributes in a dictionary called __dict__
+
+print("\n--- __dict__ - ATTRIBUTES ---")
+
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+p = Person("Joey", 30)
+print(f"Person attributes: {p.__dict__}")
+print(f"Accessing name: {p.__dict__['name']}")
+
+
+# ============================================================================
+# 8) ENCAPSULATION: PROTECTING DATA
+# ============================================================================
+# Python uses naming conventions to indicate "protected" and "private" members
+
+# _name (single underscore): protected by convention (still accessible)
+# __name (double underscore): triggers NAME MANGLING (harder to access)
+
+print("\n--- ENCAPSULATION: SINGLE UNDERSCORE ---")
+
+class User:
+    def __init__(self, username):
+        self.username = username
+        self._role = "member"  # protected by convention
+
+u = User("rk")
+print(f"Username: {u.username}")
+print(f"Role (protected): {u._role}")
+print("Note: _role is accessible, but convention says 'don't use it directly'")
+
+
+print("\n--- ENCAPSULATION: DOUBLE UNDERSCORE (NAME MANGLING) ---")
+
+class Login:
+    def __init__(self, user, password):
+        self.user = user
+        self.__password = password  # private-like (name mangled)
+
+l = Login("rk", "secret123")
+print(f"User: {l.user}")
+
+# Try to access private attribute directly
+try:
+    print(l.__password)
+except AttributeError as e:
+    print(f"Error: Cannot access __password directly")
+
+# Name mangling: Python renames __password to _Login__password
+print(f"Mangled name access: {l._Login__password}")
+print("(Not recommended, but shows how name mangling works)")
+
+
+# ============================================================================
+# 9) PROTECTING DATA USING METHODS
+# ============================================================================
+# Pattern: keep attribute private-ish, provide safe methods to interact with it
+
+print("\n--- PROTECTING DATA WITH METHODS ---")
+
+class Wallet:
+    def __init__(self, starting_balance=0):
+        """Initialize with optional starting balance"""
+        self.__balance = starting_balance
+
+    def deposit(self, amount):
+        """Safely add money (validation happens here)"""
+        if amount <= 0:
+            raise ValueError("Deposit must be positive")
+        self.__balance += amount
+        return self.__balance
+
+    def get_balance(self):
+        """Safely read balance"""
+        return self.__balance
+
+w = Wallet(50)
+print(f"Starting balance: {w.get_balance()}")
+w.deposit(30)
+print(f"After deposit: {w.get_balance()}")
+
+# Validation is enforced
+try:
+    w.deposit(-10)
+except ValueError as e:
+    print(f"Error prevented: {e}")
+
+
+# ============================================================================
+# 10) INHERITANCE
+# ============================================================================
+# Superclass/Parent: base class
+# Subclass/Child: inherits from parent
+
+print("\n--- INHERITANCE ---")
+
+class Animal:
+    """Parent class"""
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        return "Some generic sound"
+
+class Dog(Animal):
+    """Child class - inherits from Animal"""
+    pass
+
+class Cat(Animal):
+    """Another child class"""
+    pass
+
+dog = Dog("Leo")
+cat = Cat("Whiskers")
+
+print(f"Dog name: {dog.name}")
+print(f"Dog sound: {dog.speak()}")
+print(f"Cat name: {cat.name}")
+print(f"Cat sound: {cat.speak()}")
+
+
+# ============================================================================
+# 11) OVERRIDING METHODS
+# ============================================================================
+# A subclass can OVERRIDE a method to change behavior
+
+print("\n--- OVERRIDING METHODS ---")
+
+class Dog2(Animal):
+    """Dog with overridden speak method"""
+    def speak(self):
+        return "Woof!"
+
+class Cat2(Animal):
+    """Cat with overridden speak method"""
+    def speak(self):
+        return "Meow!"
+
+dog2 = Dog2("Rex")
+cat2 = Cat2("Phoebe")
+
+print(f"Dog2 speaks: {dog2.speak()}")
+print(f"Cat2 speaks: {cat2.speak()}")
+
+
+# ============================================================================
+# 12) USING super() - REUSE PARENT CLASS LOGIC
+# ============================================================================
+# super() lets you call parent class methods (especially in __init__)
+
+print("\n--- SUPER() - REUSING PARENT LOGIC ---")
+
+class Employee:
+    """Parent: basic employee"""
+    def __init__(self, name, emp_id):
+        self.name = name
+        self.emp_id = emp_id
+
+class Manager(Employee):
+    """Child: manager with additional attributes"""
+    def __init__(self, name, emp_id, team_size):
+        # Call parent constructor
+        super().__init__(name, emp_id)
+        # Add manager-specific attribute
+        self.team_size = team_size
+
+m = Manager("Ritesh", "E101", 5)
+print(f"Manager attributes: {m.__dict__}")
+print(f"Name: {m.name}, ID: {m.emp_id}, Team size: {m.team_size}")
+
+
+# ============================================================================
+# 13) POLYMORPHISM
+# ============================================================================
+# Same method name, different behavior depending on the object type
+
+print("\n--- POLYMORPHISM ---")
+
+class Bird:
+    def speak(self):
+        return "Chirp"
+
+class Human:
+    def speak(self):
+        return "Hello"
+
+class Dog3:
+    def speak(self):
+        return "Woof"
+
+def make_it_speak(creature):
+    """Function that works with ANY object that has speak() method"""
+    print(f"Sound: {creature.speak()}")
+
+print("Polymorphism - same function, different behaviors:")
+make_it_speak(Bird())
+make_it_speak(Human())
+make_it_speak(Dog3())
+
+
+# ============================================================================
+# 14) *args - VARIABLE POSITIONAL ARGUMENTS
+# ============================================================================
+# Collects extra positional arguments into a tuple
+
+print("\n--- *args (VARIABLE POSITIONAL ARGUMENTS) ---")
+
+def demo_args(*args):
+    """Accept any number of positional arguments"""
+    print(f"args: {args}")
+    print(f"Type: {type(args)}")
+    for i, arg in enumerate(args):
+        print(f"  arg[{i}] = {arg}")
+
+demo_args(1, 2, 3, "hello")
+
+
+# ============================================================================
+# 15) **kwargs - VARIABLE KEYWORD ARGUMENTS
+# ============================================================================
+# Collects extra keyword arguments into a dictionary
+
+print("\n--- **kwargs (VARIABLE KEYWORD ARGUMENTS) ---")
+
+def demo_kwargs(**kwargs):
+    """Accept any number of keyword arguments"""
+    print(f"kwargs: {kwargs}")
+    print(f"Type: {type(kwargs)}")
+    for key, value in kwargs.items():
+        print(f"  {key} = {value}")
+
+demo_kwargs(name="Ritesh", age=22, city="LA")
+
+
+# ============================================================================
+# 16) *args AND **kwargs IN CLASSES
+# ============================================================================
+# Useful for flexible constructors
+
+print("\n--- *args AND **kwargs IN CLASSES ---")
+
+class FlexibleUser:
+    """User class that accepts flexible arguments"""
+    def __init__(self, username, *args, **kwargs):
+        self.username = username
+        self.extra_args = args
+        self.extra_kwargs = kwargs
+
+u = FlexibleUser("rk", 1, 2, 3, role="admin", active=True, city="LA")
+print(f"Username: {u.username}")
+print(f"Extra args: {u.extra_args}")
+print(f"Extra kwargs: {u.extra_kwargs}")
+
+
+# ============================================================================
+# 17) PRACTICAL EXAMPLE: COMPLETE CLASS WITH ALL FEATURES
+# ============================================================================
+print("\n--- PRACTICAL EXAMPLE: COMPLETE CLASS ---")
+
+class Vehicle:
+    """Base class for vehicles"""
+    def __init__(self, brand, model):
+        self.brand = brand
+        self.model = model
+
+    def __str__(self):
+        return f"{self.brand} {self.model}"
+
+    def start(self):
+        return "Engine started"
+
+
+class Car3(Vehicle):
+    """Car class inheriting from Vehicle"""
+    def __init__(self, brand, model, num_doors):
+        super().__init__(brand, model)
+        self.num_doors = num_doors
+
+    def start(self):
+        """Override: different startup behavior"""
+        return f"{self.brand} car is ready to drive"
+
+    def __repr__(self):
+        return f"Car(brand={self.brand!r}, model={self.model!r}, doors={self.num_doors})"
+
+
+class Motorcycle(Vehicle):
+    """Motorcycle class inheriting from Vehicle"""
+    def start(self):
+        """Override: motorcycle startup"""
+        return f"{self.brand} motorcycle is ready to ride"
+
+
+# Create and use objects
+car = Car3("Toyota", "Camry", 4)
+bike = Motorcycle("Harley", "Sportster")
+
+print(f"Car: {car}")
+print(f"Car startup: {car.start()}")
+print(f"Motorcycle: {bike}")
+print(f"Motorcycle startup: {bike.start()}")
+
+
+# ============================================================================
+# SUMMARY OF KEY CONCEPTS
+# ============================================================================
+summary = """
+SUMMARY OF OOP SESSION 1:
+
+1. CLASS vs OBJECT:
+   - Class: blueprint/template
+   - Object: instance created from class
+
+2. __init__ (CONSTRUCTOR):
+   - Runs automatically when creating object
+   - Initialize attributes
+
+3. METHODS:
+   - Functions inside a class
+   - Use 'self' to access object data
+
+4. __str__ vs __repr__:
+   - __str__: user-friendly (print())
+   - __repr__: debug-friendly (repr())
+
+5. ENCAPSULATION:
+   - _name: protected by convention
+   - __name: private (name mangling)
+   - Use methods to control access
+
+6. __dict__:
+   - Dictionary storing object's attributes
+   - Access with obj.__dict__
+
+7. INHERITANCE:
+   - Child class inherits from parent
+   - Reuse parent code with super()
+
+8. OVERRIDING:
+   - Subclass can override parent methods
+   - Change behavior for specific child class
+
+9. POLYMORPHISM:
+   - Same method name, different behaviors
+   - Works with any object having that method
+
+10. *args and **kwargs:
+    - *args: variable positional arguments (tuple)
+    - **kwargs: variable keyword arguments (dict)
+    - Useful for flexible constructors
+
+11. 4 PILLARS:
+    - Abstraction: hide complexity
+    - Encapsulation: protect data
+    - Inheritance: reuse code
+    - Polymorphism: flexible interfaces
+"""
+
+print("\n" + "=" * 70)
+print(summary)
+print("=" * 70)
+print("\nOOP Session 1 examples completed successfully!")
